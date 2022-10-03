@@ -10,6 +10,7 @@ class OrderRequest:
 
         self.today = datetime.date.today()
         self.yesterday = self.today - timedelta(days=1)
+        self.yesterdayy = self.yesterday.strftime("%m/%d/%Y")
 
         self.newark_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
                                self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["newark_mid"],
@@ -68,20 +69,22 @@ class OrderRequest:
 
         for index in range(len(data_elements)):
             order = data_elements[index]
-            # print(index)
+            print(index)
+            try:
+                for i in range(len(order["lineItems"]["elements"])):
 
-            for i in range(len(order["lineItems"]["elements"])):
+                    item = order["lineItems"]["elements"][i]["name"]
+                    item = item.replace(" TPD","")
+                    item = item.replace("*","")
+                    item = item.replace("Bowl ","Bowl")
 
-                item = order["lineItems"]["elements"][i]["name"]
-                item = item.replace(" TPD","")
-                item = item.replace("*","")
-                item = item.replace("Bowl ","Bowl")
+                    if item in inventory_sold:
+                        inventory_sold[item] += 1
+                    else:
+                        inventory_sold[item] = 1
 
-                if item in inventory_sold:
-                    inventory_sold[item] += 1
-                else:
-                    inventory_sold[item] = 1
-
+            except KeyError:
+                pass
 
                 try:
                     for ind in range(len(order["lineItems"]["elements"][i]["modifications"]["elements"])):
@@ -99,6 +102,9 @@ class OrderRequest:
                             mod_dict[item_modification] = 1
                 except KeyError:
                     pass
+
+
+
 
         return [inventory_sold,mod_dict]
 

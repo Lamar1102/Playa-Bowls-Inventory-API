@@ -197,5 +197,7 @@ class Mods(Inventory):
             "Honey Used": (self.tide+self.coco_craze+self.coco_bowl+self.coco_berry+self.pura_vida+self.tropical+self.add_honey+self.sub_honey-self.remove_honey+self.almond_joy+self.the_jetty+self.electric_mermaid+self.dragonberry+self.goji+self.pink_flamingo+self.lola+self.pacific+self.ocean),
             "Granola Used": ((self.bowl_dictionary["Acai Bowls"]["Total Acai Bowls"] + self.bowl_dictionary["Pitaya Bowls"]["Total Pitaya Bowls"] + self.bowl_dictionary["Chia Bowls"]["Total Chia Bowls"] + self.bowl_dictionary["Green Bowls"]["Total Green Bowls"] + self.bowl_dictionary["Coconut Bowls"]["Total Coconut Bowls"] + self.bowl_dictionary["Banana Bowls"]["Total Banana Bowls"] + self.bowl_dictionary["Special Bowls"]["Total Special Bowls"] - self.remove_granola)*3) + ((self.add_granola +self.sub_granola)*2),
             "Coconut Flakes Used":(self.nutella+self.chiatella+self.goji+self.nutaya+self.electric_mermaid+self.tropical+self.lola+self.add_coco_flakes+self.sub_coco_flakes-self.remove_coco_flakes+self.nutelloco+self.coco_craze+self.coco_power)*1.2,
+            "Acai Used":self.bowl_dictionary["Acai Bowls"]["Total Acai Bowls"] * 11,
+            "Coconut Base Used":self.bowl_dictionary["Coconut Bowls"]["Total Coconut Bowls"] * 11
         }
 
