@@ -12,14 +12,16 @@ order_request = OrderRequest()
 newark_dictionaries = order_request.newark_report
 newark_inventory_sold = newark_dictionaries[0]
 newark_mod_sold = newark_dictionaries[1]
-
+print(newark_mod_sold)
 newark_inventory = Inventory(newark_inventory_sold)
 newark_bowls_sold = newark_inventory.bowl_dictionary
 print(newark_bowls_sold)
 
+
 newark_mods_sold = Mods(newark_mod_sold,newark_inventory_sold)
 newark_total_used = newark_mods_sold.inventory_used
 print(newark_total_used)
+
 
 # RUTHERFORD INFO
 # rutherford_dictionaries = order_request.rutherford_report
@@ -108,5 +110,7 @@ for key, value in newark_total_used.items():
     newark_spreadsheet.update_cell(i,3,f"{order_request.yesterdayy}")
     newark_spreadsheet.update_cell(i,4,value)
     i+=1
+
+
 
 

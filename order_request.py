@@ -15,21 +15,21 @@ class OrderRequest:
         self.newark_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
                                self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["newark_mid"],
                                newark_api_token)
-        self.rutherford_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
-                               self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["rutherford_mid"],
-                               rutherford_api_token)
-        self.watchung_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
-                               self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["watchung_mid"],
-                               watchung_api_token)
-        self.uc_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
-                               self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["uc_mid"],
-                               uc_api_token)
-        self.hoboken_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
-                               self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["hoboken_mid"],
-                               hoboken_api_token)
-        self.elizabeth_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
-                            self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["elizabteh_mid"],
-                               elizabeth_api_token)
+        # self.rutherford_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
+        #                        self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["rutherford_mid"],
+        #                        rutherford_api_token)
+        # self.watchung_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
+        #                        self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["watchung_mid"],
+        #                        watchung_api_token)
+        # self.uc_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
+        #                        self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["uc_mid"],
+        #                        uc_api_token)
+        # self.hoboken_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
+        #                        self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["hoboken_mid"],
+        #                        hoboken_api_token)
+        # self.elizabeth_report = self.sales_request(self.date_to_timestamp(f'{self.yesterday} - 00:00:00'),
+        #                     self.date_to_timestamp(f'{self.yesterday} - 23:59:59'), mid_dictionary["elizabteh_mid"],
+        #                        elizabeth_api_token)
 
     def date_to_timestamp(self,date):
         date = datetime.datetime.strptime(date, "%Y-%m-%d - %H:%M:%S")
@@ -60,18 +60,19 @@ class OrderRequest:
 
         data = response.json()
         data2 = response.text
+
         # print(data2)
-
-
         data_elements = data["elements"]
-
-
 
         for index in range(len(data_elements)):
             order = data_elements[index]
             print(index)
             try:
-                for i in range(len(order["lineItems"]["elements"])):
+                line_items = len(order["lineItems"]["elements"])
+            except KeyError:
+                pass
+            else:
+                for i in range(line_items):
 
                     item = order["lineItems"]["elements"][i]["name"]
                     item = item.replace(" TPD","")
@@ -83,27 +84,22 @@ class OrderRequest:
                     else:
                         inventory_sold[item] = 1
 
-            except KeyError:
-                pass
+                    try:
+                        for ind in range(len(order["lineItems"]["elements"][i]["modifications"]["elements"])):
 
-                try:
-                    for ind in range(len(order["lineItems"]["elements"][i]["modifications"]["elements"])):
+                            item_modification = order["lineItems"]["elements"][i]["modifications"]["elements"][ind]["name"]
+                            item_modification = item_modification.replace("(or Extra) ","")
+                            item_modification=item_modification.replace("or Extra ","")
+                            item_modification=item_modification.replace("Strawberries","Strawberry")
+                            item_modification=item_modification.replace("Substitute","Sub")
+                            item_modification = item_modification.strip()
 
-                        item_modification = order["lineItems"]["elements"][i]["modifications"]["elements"][ind]["name"]
-                        item_modification = item_modification.replace("(or Extra) ","")
-                        item_modification=item_modification.replace("or Extra ","")
-                        item_modification=item_modification.replace("Strawberries","Strawberry")
-                        item_modification=item_modification.replace("Substitute","Sub")
-                        item_modification = item_modification.strip()
-
-                        if item_modification in mod_dict:
-                            mod_dict[item_modification] += 1
-                        else:
-                            mod_dict[item_modification] = 1
-                except KeyError:
-                    pass
-
-
+                            if item_modification in mod_dict:
+                                mod_dict[item_modification] += 1
+                            else:
+                                mod_dict[item_modification] = 1
+                    except KeyError:
+                        pass
 
 
         return [inventory_sold,mod_dict]
